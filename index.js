@@ -30,10 +30,19 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     // Send a ping to confirm a successful connection
-    const favouriteCollection = client.db("mealDB").collection("favourties");
+    const favouriteCollection = client.db("mealDB").collection("favourites");
+
+    app.get("/api/v1/get-favourite", async (req, res) => {
+      const { id } = req.query;
+      const query = { userId: id };
+
+      const cursor = favouriteCollection.find(query);
+      const result = await cursor.toArray();
+
+      res.send(result);
+    });
 
     app.post("/api/v1/add-favourite", async (req, res) => {
-      console.log(req.body);
       const foodInfo = req.body;
       const result = await favouriteCollection.insertOne(foodInfo);
       res.send(result);
